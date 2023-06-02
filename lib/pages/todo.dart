@@ -9,67 +9,84 @@ class TodoPage extends StatefulWidget {
 }
 
 class _TodoPageState extends State<TodoPage> {
+  ScrollController scrollController = ScrollController();
   List<Todo> todolist = [
     Todo("Cook", false),
     Todo("Read a book", false),
+    Todo("Learn flutter", false),
+    Todo("Learn flutter", false),
+    Todo("Learn flutter", false),
+    Todo("Learn flutter", false),
     Todo("Learn flutter", false),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: MediaQuery.sizeOf(context).width,
-        padding: const EdgeInsets.fromLTRB(32, 64, 32, 32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                title(),
-                taskCount(),
-                const SizedBox(height: 8),
-                task(),
-                task(),
-                task(),
-                task(),
-                task(),
-              ],
+        body: Container(
+      width: MediaQuery.sizeOf(context).width,
+      padding: const EdgeInsets.only(
+        top: 64,
+      ),
+      child: CustomScrollView(
+        controller: scrollController,
+        physics: const ClampingScrollPhysics(),
+        slivers: [
+          SliverList(
+            delegate: SliverChildListDelegate([
+              title(),
+              taskCount(),
+              const SizedBox(height: 8, width: 1),
+              ListView.builder(
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                itemCount: todolist.length,
+                itemBuilder: (context, index) =>
+                    task(todolist[index], (check) {}),
+              )
+            ]),
+          ),
+          SliverToBoxAdapter(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [addTodoButton(context)],
             ),
-            addTodoButton(context),
-          ],
+          )
+        ],
+      ),
+    ));
+  }
+
+  Container taskCount() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      child: const Text(
+        "you have 3 tasks remain for today",
+        style: TextStyle(
+          color: Color(0xff858CA7),
+          fontSize: 14,
         ),
       ),
     );
   }
 
-  Text taskCount() {
-    return const Text(
-      "you have 3 tasks remain for today",
-      style: TextStyle(
-        color: Color(0xff858CA7),
-        fontSize: 14,
-      ),
-      textAlign: TextAlign.center,
-    );
-  }
-
-  Text title() {
-    return const Text(
-      "My Todo",
-      style: TextStyle(
-        color: Color(0xff252D89),
-        fontSize: 40,
-        fontWeight: FontWeight.bold,
-      ),
-    );
-  }
-
-  Container task() {
+  Container title() {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      child: const Text(
+        "My Todo",
+        style: TextStyle(
+          color: Color(0xff252D89),
+          fontSize: 40,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Container task(Todo todo, Function(bool?) onCheck) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 32),
       padding: const EdgeInsets.symmetric(
         vertical: 12,
         horizontal: 16,
@@ -93,13 +110,13 @@ class _TodoPageState extends State<TodoPage> {
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(3))),
             checkColor: const Color(0xff3E4ADE),
-            value: false,
-            onChanged: (check) {},
+            value: todo.complete,
+            onChanged: (check) => onCheck(check),
           ),
-          const SizedBox(width: 8),
-          const Text(
-            "Cook",
-            style: TextStyle(
+          const SizedBox(width: 8, height: 1),
+          Text(
+            todo.task,
+            style: const TextStyle(
               color: Color(0xff252D89),
               fontSize: 14,
             ),
@@ -109,23 +126,26 @@ class _TodoPageState extends State<TodoPage> {
     );
   }
 
-  ElevatedButton addTodoButton(BuildContext context) {
-    return ElevatedButton(
-      style: const ButtonStyle(
-        backgroundColor: MaterialStatePropertyAll<Color>(
-          Color(0xff3E4ADE),
+  Container addTodoButton(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      child: ElevatedButton(
+        style: const ButtonStyle(
+          backgroundColor: MaterialStatePropertyAll<Color>(
+            Color(0xff3E4ADE),
+          ),
         ),
-      ),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        width: MediaQuery.sizeOf(context).width,
-        child: const Text(
-          "Add Todo",
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.white),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          width: MediaQuery.sizeOf(context).width,
+          child: const Text(
+            "Add Todo",
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white),
+          ),
         ),
+        onPressed: () => Navigator.pushNamed(context, "/todo"),
       ),
-      onPressed: () => Navigator.pushNamed(context, "/todo"),
     );
   }
 }
