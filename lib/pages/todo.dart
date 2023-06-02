@@ -20,6 +20,12 @@ class _TodoPageState extends State<TodoPage> {
     Todo("Learn flutter", false),
   ];
 
+  onCheck(int index, bool check) {
+    setState(() {
+      todolist[index].complete = check;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,7 +48,7 @@ class _TodoPageState extends State<TodoPage> {
                 shrinkWrap: true,
                 itemCount: todolist.length,
                 itemBuilder: (context, index) =>
-                    task(todolist[index], (check) {}),
+                    task(todolist[index], (check) => onCheck(index, check)),
               )
             ]),
           ),
@@ -84,7 +90,7 @@ class _TodoPageState extends State<TodoPage> {
     );
   }
 
-  Container task(Todo todo, Function(bool?) onCheck) {
+  Container task(Todo todo, Function(bool) onCheck) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 32),
       padding: const EdgeInsets.symmetric(
@@ -111,7 +117,7 @@ class _TodoPageState extends State<TodoPage> {
                 borderRadius: BorderRadius.all(Radius.circular(3))),
             checkColor: const Color(0xff3E4ADE),
             value: todo.complete,
-            onChanged: (check) => onCheck(check),
+            onChanged: (check) => onCheck(check ?? false),
           ),
           const SizedBox(width: 8, height: 1),
           Text(
