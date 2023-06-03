@@ -132,6 +132,48 @@ class _TodoPageState extends State<TodoPage> {
     );
   }
 
+  openModalAddTodo(BuildContext context) {
+    return showModalBottomSheet(
+        showDragHandle: true,
+        context: context,
+        builder: (context) {
+          return Container(
+            padding: const EdgeInsets.only(left: 32, right: 32),
+            width: MediaQuery.sizeOf(context).width,
+            height: 180,
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              const Text(
+                "What do you need to do.",
+                style: TextStyle(
+                  color: Color(0xff858CA7),
+                  fontSize: 14,
+                ),
+              ),
+              const TextField(),
+              const SizedBox(width: 1, height: 16),
+              ElevatedButton(
+                style: const ButtonStyle(
+                  backgroundColor: MaterialStatePropertyAll<Color>(
+                    Color(0xff3E4ADE),
+                  ),
+                ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  width: MediaQuery.sizeOf(context).width,
+                  child: const Text(
+                    "Save",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                onPressed: () {},
+              )
+            ]),
+          );
+        });
+  }
+
   Container addTodoButton(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -150,7 +192,7 @@ class _TodoPageState extends State<TodoPage> {
             style: TextStyle(color: Colors.white),
           ),
         ),
-        onPressed: () => Navigator.pushNamed(context, "/todo"),
+        onPressed: () => openModalAddTodo(context),
       ),
     );
   }
