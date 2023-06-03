@@ -14,10 +14,6 @@ class _TodoPageState extends State<TodoPage> {
     Todo("Cook", false),
     Todo("Read a book", false),
     Todo("Learn flutter", false),
-    Todo("Learn flutter", false),
-    Todo("Learn flutter", false),
-    Todo("Learn flutter", false),
-    Todo("Learn flutter", false),
   ];
 
   onCheck(int index, bool check) {
@@ -31,28 +27,27 @@ class _TodoPageState extends State<TodoPage> {
     return Scaffold(
         body: Container(
       width: MediaQuery.sizeOf(context).width,
-      padding: const EdgeInsets.only(
-        top: 64,
-      ),
+      padding: const EdgeInsets.only(top: 64, bottom: 32),
       child: CustomScrollView(
         controller: scrollController,
         physics: const ClampingScrollPhysics(),
         slivers: [
           SliverList(
-            delegate: SliverChildListDelegate([
-              title(),
-              taskCount(),
-              const SizedBox(height: 8, width: 1),
-              ListView.builder(
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                itemCount: todolist.length,
-                itemBuilder: (context, index) =>
-                    task(todolist[index], (check) => onCheck(index, check)),
-              )
-            ]),
+            delegate: SliverChildListDelegate(
+              [
+                title(),
+                taskCount(),
+                const SizedBox(height: 8, width: 1),
+                ...todolist.asMap().entries.map(
+                      (entry) => task(
+                        todolist[entry.key],
+                        (check) => onCheck(entry.key, check),
+                      ),
+                    )
+              ],
+            ),
           ),
-          SliverToBoxAdapter(
+          SliverFillRemaining(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [addTodoButton(context)],
