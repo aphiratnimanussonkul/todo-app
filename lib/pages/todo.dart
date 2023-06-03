@@ -64,11 +64,12 @@ class _TodoPageState extends State<TodoPage> {
   }
 
   Container taskCount() {
+    int remainingTask = todolist.where((element) => !element.complete).length;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 32),
-      child: const Text(
-        "you have 3 tasks remain for today",
-        style: TextStyle(
+      child: Text(
+        "you have $remainingTask tasks remain for today",
+        style: const TextStyle(
           color: Color(0xff858CA7),
           fontSize: 14,
         ),
@@ -133,6 +134,7 @@ class _TodoPageState extends State<TodoPage> {
   }
 
   openModalAddTodo(BuildContext context) {
+    TextEditingController todoController = TextEditingController();
     return showModalBottomSheet(
         showDragHandle: true,
         context: context,
@@ -150,7 +152,7 @@ class _TodoPageState extends State<TodoPage> {
                   fontSize: 14,
                 ),
               ),
-              const TextField(),
+              TextField(controller: todoController),
               const SizedBox(width: 1, height: 16),
               ElevatedButton(
                 style: const ButtonStyle(
@@ -167,7 +169,12 @@ class _TodoPageState extends State<TodoPage> {
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  setState(() {
+                    todolist.add(Todo(todoController.text, false));
+                  });
+                  Navigator.pop(context);
+                },
               )
             ]),
           );
